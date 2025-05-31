@@ -24,78 +24,82 @@ const VentSpace = () => {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+      <Card className="bg-gradient-to-br from-purple-900/80 to-pink-900/80 border-purple-500/30 backdrop-blur-sm shadow-2xl">
         <CardContent className="p-8">
           <div className="flex items-center gap-3 mb-8">
-            <span className="text-3xl">📝</span>
-            <h1 className="text-3xl font-bold text-white">VentSpace - Anonymous Journaling</h1>
+            <div className="text-5xl animate-bounce">📝</div>
+            <h1 className="text-4xl font-bold text-white bg-gradient-to-r from-purple-200 to-pink-200 bg-clip-text text-transparent">
+              VentSpace - My Secret Diary! 🌈
+            </h1>
           </div>
 
           <div className="mb-8">
-            <div className="bg-slate-700/30 rounded-lg p-6 mb-4">
+            <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl p-6 mb-4 border-2 border-dashed border-purple-300/50">
               <textarea 
                 value={journalEntry}
                 onChange={(e) => setJournalEntry(e.target.value)}
-                placeholder="Write your thoughts freely... This is your safe space."
-                className="w-full bg-transparent text-white placeholder-slate-400 resize-none border-none outline-none text-lg leading-relaxed"
+                placeholder="✨ Write your thoughts here... This is your magical safe space! ✨"
+                className="w-full bg-transparent text-white placeholder-purple-200 resize-none border-none outline-none text-lg leading-relaxed font-medium"
                 rows={12}
               />
             </div>
 
-            <div className="flex items-center space-x-2 mb-4">
+            <div className="flex items-center space-x-3 mb-6">
               <Checkbox 
                 id="share-anonymous"
                 checked={shareAnonymously}
-                onCheckedChange={setShareAnonymously}
-                className="border-slate-400"
+                onCheckedChange={(checked) => setShareAnonymously(checked === true)}
+                className="border-purple-300 data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500 rounded-lg w-5 h-5"
               />
-              <label htmlFor="share-anonymous" className="text-slate-300">
-                Share anonymously for community support
+              <label htmlFor="share-anonymous" className="text-purple-200 font-medium text-lg">
+                🤝 Share anonymously for friendship support
               </label>
             </div>
 
             <Button 
               onClick={handleSaveEntry}
-              className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white py-3"
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-4 text-xl font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
               disabled={!journalEntry.trim()}
             >
-              Save Entry
+              🌟 Save My Entry! 🌟
             </Button>
           </div>
 
-          <Card className="bg-slate-700/30 border-slate-600">
+          <Card className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border-cyan-300/50 border-2 rounded-3xl">
             <CardContent className="p-6">
-              <h3 className="text-xl font-semibold text-white mb-4">AI Tone Analysis</h3>
+              <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                🤖 Mood Detective AI 🔍
+              </h3>
               <div className="mb-4">
                 <textarea 
                   value={analysisText}
                   onChange={(e) => setAnalysisText(e.target.value)}
-                  placeholder="Write something to get AI-powered emotional insights..."
-                  className="w-full bg-slate-600/30 text-white placeholder-slate-400 resize-none border border-slate-500 rounded-lg p-4 outline-none"
+                  placeholder="🎭 Write something and let me guess how you're feeling..."
+                  className="w-full bg-cyan-500/10 text-white placeholder-cyan-200 resize-none border-2 border-cyan-300/30 rounded-2xl p-4 outline-none text-lg"
                   rows={4}
                 />
               </div>
               <Button 
                 onClick={handleAnalysis}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white text-lg font-bold py-3 rounded-2xl transform hover:scale-105 transition-all duration-300"
                 disabled={!analysisText.trim()}
               >
-                Analyze Emotional Tone
+                🎯 Analyze My Feelings!
               </Button>
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-2 gap-4 mt-8">
-            <Card className="bg-slate-700/30 border-slate-600">
+          <div className="grid grid-cols-2 gap-6 mt-8">
+            <Card className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-yellow-300/50 border-2 rounded-3xl">
               <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-cyan-400 mb-2">0</div>
-                <div className="text-slate-300">Journal Entries</div>
+                <div className="text-5xl font-bold text-yellow-300 mb-2">0</div>
+                <div className="text-yellow-100 text-lg font-medium">📖 My Stories</div>
               </CardContent>
             </Card>
-            <Card className="bg-slate-700/30 border-slate-600">
+            <Card className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border-green-300/50 border-2 rounded-3xl">
               <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-cyan-400 mb-2">0</div>
-                <div className="text-slate-300">Support Reactions</div>
+                <div className="text-5xl font-bold text-green-300 mb-2">0</div>
+                <div className="text-green-100 text-lg font-medium">💝 Friend Hearts</div>
               </CardContent>
             </Card>
           </div>
