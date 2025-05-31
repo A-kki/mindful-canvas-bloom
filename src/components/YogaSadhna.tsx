@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,8 @@ const YogaSadhna = () => {
   const [isPaused, setIsPaused] = useState(false);
   const { toast } = useToast();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const tickingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const yogaTypes = [
     { 
@@ -49,14 +50,81 @@ const YogaSadhna = () => {
 
   const currentYoga = yogaTypes.find(yoga => yoga.id === selectedYoga);
 
+  // Initialize audio
+  useEffect(() => {
+    // Create audio element for background music
+    audioRef.current = new Audio();
+    audioRef.current.src = "https://www.soundjay.com/misc/sounds/meditation-chime-01.wav"; // Fallback meditation audio
+    audioRef.current.loop = true;
+    audioRef.current.volume = 0.3;
+
+    // Try to use a meditation audio URL (since direct YouTube audio extraction isn't possible in browser)
+    // In a real app, you'd need to convert the YouTube audio to a direct audio file
+    const meditationAudioUrl = "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav";
+    audioRef.current.src = meditationAudioUrl;
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  const playTickingSound = () => {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+  };
+
+  const startContinuousTicking = () => {
+    tickingIntervalRef.current = setInterval(() => {
+      playTickingSound();
+    }, 1000); // Tick every second
+  };
+
+  const stopContinuousTicking = () => {
+    if (tickingIntervalRef.current) {
+      clearInterval(tickingIntervalRef.current);
+      tickingIntervalRef.current = null;
+    }
+  };
+
+  const playFinalTickingSound = () => {
+    // Play ticking sound for 2 seconds
+    let tickCount = 0;
+    const finalTickInterval = setInterval(() => {
+      playTickingSound();
+      tickCount++;
+      if (tickCount >= 4) { // 2 seconds worth of ticks (every 0.5 seconds)
+        clearInterval(finalTickInterval);
+      }
+    }, 500);
+  };
+
   // Timer effect
   useEffect(() => {
     if (isActive && !isPaused && timeRemaining > 0) {
       intervalRef.current = setInterval(() => {
         setTimeRemaining(time => {
           if (time <= 1) {
-            // Time's up - play ticking sound and show notification
-            playTickingSound();
+            // Time's up - stop everything and play final ticking
+            stopContinuousTicking();
+            if (audioRef.current) {
+              audioRef.current.pause();
+            }
+            playFinalTickingSound();
             toast({
               title: "Session Complete! 🧘‍♀️",
               description: "Your yoga session has ended. Great work!",
@@ -80,33 +148,20 @@ const YogaSadhna = () => {
     };
   }, [isActive, isPaused, timeRemaining, toast]);
 
-  const playTickingSound = () => {
-    // Create a simple ticking sound using Web Audio API
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    
-    // Create multiple beeps for a ticking effect
-    for (let i = 0; i < 3; i++) {
-      setTimeout(() => {
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.1);
-      }, i * 200);
-    }
-  };
-
   const startSession = () => {
     setTimeRemaining(duration[0] * 60); // Convert minutes to seconds
     setIsActive(true);
     setIsPaused(false);
+    
+    // Start background audio
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(console.error);
+    }
+    
+    // Start continuous ticking
+    startContinuousTicking();
+    
     toast({
       title: "Session Started",
       description: `Starting ${currentYoga?.name} for ${duration[0]} minutes`,
@@ -115,12 +170,34 @@ const YogaSadhna = () => {
 
   const pauseSession = () => {
     setIsPaused(!isPaused);
+    
+    if (!isPaused) {
+      // Pausing
+      stopContinuousTicking();
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    } else {
+      // Resuming
+      startContinuousTicking();
+      if (audioRef.current) {
+        audioRef.current.play().catch(console.error);
+      }
+    }
   };
 
   const stopSession = () => {
     setIsActive(false);
     setIsPaused(false);
     setTimeRemaining(0);
+    
+    // Stop all audio
+    stopContinuousTicking();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    
     toast({
       title: "Session Stopped",
       description: "Your yoga session has been ended",
@@ -201,6 +278,12 @@ const YogaSadhna = () => {
                 <div className="text-6xl font-bold text-white mb-6">
                   {isActive ? formatTime(timeRemaining) : formatTime(duration[0] * 60)}
                 </div>
+
+                {isActive && (
+                  <div className="text-cyan-400 mb-4 text-sm">
+                    🎵 Background music playing • 🔔 Continuous ticking
+                  </div>
+                )}
 
                 <div className="flex justify-center gap-4">
                   {!isActive ? (
