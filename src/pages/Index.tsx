@@ -13,6 +13,20 @@ import YogaSadhna from '@/components/YogaSadhna';
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [currentQuote, setCurrentQuote] = useState({ text: '', author: '' });
+
+  const quotes = [
+    { text: "The greatest revolution of our generation is the discovery that human beings, by changing the inner attitudes of their minds, can change the outer aspects of their lives.", author: "William James" },
+    { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson" },
+    { text: "The mind is everything. What you think you become.", author: "Buddha" },
+    { text: "You have been critical of yourself for years, and it hasn't worked. Try approving of yourself and see what happens.", author: "Louise Hay" },
+    { text: "Mental health is not a destination, but a process. It's about how you drive, not where you're going.", author: "Noam Shpancer" },
+    { text: "Your mental health is a priority. Your happiness is essential. Your self-care is a necessity.", author: "Unknown" },
+    { text: "It's okay to not be okay. It's not okay to stay that way.", author: "Unknown" },
+    { text: "Healing takes time, and asking for help is a courageous step.", author: "Mariska Hargitay" },
+    { text: "The strongest people are not those who show strength in front of us, but those who win battles we know nothing about.", author: "Unknown" },
+    { text: "You are braver than you believe, stronger than you seem, and smarter than you think.", author: "A.A. Milne" }
+  ];
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -23,6 +37,10 @@ const Index = () => {
       setIsDarkMode(false);
       document.documentElement.classList.remove('dark');
     }
+
+    // Set random quote on component mount
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    setCurrentQuote(randomQuote);
   }, []);
 
   const toggleDarkMode = () => {
@@ -85,8 +103,8 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         <Card className="bg-gradient-to-r from-white/80 to-purple-100/80 dark:from-slate-800/90 dark:to-blue-900/90 border-purple-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
           <CardContent className="p-8">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-4">
+            <div className="flex justify-between items-start">
+              <div className="flex items-center gap-4 flex-1">
                 <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-pink-400 dark:from-blue-400 dark:to-indigo-500 rounded-full flex items-center justify-center text-3xl animate-bounce">
                   🌈
                 </div>
@@ -97,28 +115,106 @@ const Index = () => {
                   <p className="text-purple-600 dark:text-blue-300 text-xl font-medium">Your Magical Wellness Adventure! ✨</p>
                 </div>
               </div>
-              <Button
-                onClick={toggleDarkMode}
-                className="bg-gradient-to-r from-slate-600 to-slate-700 dark:from-slate-800 dark:to-slate-900 hover:from-slate-700 hover:to-slate-800 dark:hover:from-slate-700 dark:hover:to-slate-800 text-white rounded-full w-16 h-16 text-2xl font-bold transform hover:scale-110 transition-all duration-300"
-              >
-                {isDarkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
-              </Button>
+              
+              {/* Features Menu - Top Right */}
+              <div className="flex flex-col items-end gap-4">
+                <Button
+                  onClick={toggleDarkMode}
+                  className="bg-gradient-to-r from-slate-600 to-slate-700 dark:from-slate-800 dark:to-slate-900 hover:from-slate-700 hover:to-slate-800 dark:hover:from-slate-700 dark:hover:to-slate-800 text-white rounded-full w-16 h-16 text-2xl font-bold transform hover:scale-110 transition-all duration-300"
+                >
+                  {isDarkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+                </Button>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  {menuItems.map((item) => (
+                    <Button
+                      key={item.id}
+                      onClick={() => setActiveSection(item.id)}
+                      className={`bg-gradient-to-br ${item.gradient} dark:from-slate-700 dark:to-slate-800 hover:scale-110 text-white p-4 h-auto flex flex-col gap-2 transition-all duration-300 backdrop-blur-sm rounded-2xl border-2 border-white/20 dark:border-slate-600/50 shadow-lg hover:shadow-2xl w-32`}
+                    >
+                      <span className="text-2xl animate-pulse">{item.icon}</span>
+                      <span className="text-xs font-bold text-center leading-tight">{item.label}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Navigation Menu */}
-        <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {menuItems.map((item) => (
-            <Button
-              key={item.id}
-              onClick={() => setActiveSection(item.id)}
-              className={`bg-gradient-to-br ${item.gradient} dark:from-slate-700 dark:to-slate-800 hover:scale-110 text-white p-6 h-auto flex flex-col gap-3 transition-all duration-300 backdrop-blur-sm rounded-3xl border-2 border-white/20 dark:border-slate-600/50 shadow-lg hover:shadow-2xl`}
-            >
-              <span className="text-4xl animate-pulse">{item.icon}</span>
-              <span className="text-sm font-bold text-center">{item.label}</span>
-            </Button>
-          ))}
+        {/* Daily Quote Section */}
+        <div className="mt-8">
+          <Card className="bg-gradient-to-br from-white/90 to-yellow-100/90 dark:from-slate-800/90 dark:to-blue-900/90 border-yellow-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
+            <CardContent className="p-8 text-center">
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <span className="text-4xl animate-pulse">💫</span>
+                <h2 className="text-3xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-yellow-600 to-orange-600 dark:from-yellow-300 dark:to-orange-300 bg-clip-text text-transparent">
+                  Today's Inspiration
+                </h2>
+                <span className="text-4xl animate-pulse">✨</span>
+              </div>
+              
+              <blockquote className="text-xl font-medium italic text-gray-700 dark:text-gray-200 mb-4 leading-relaxed">
+                "{currentQuote.text}"
+              </blockquote>
+              
+              <p className="text-lg font-semibold text-purple-600 dark:text-blue-300">
+                — {currentQuote.author}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Why Mental Health is Important */}
+        <div className="mt-8">
+          <Card className="bg-gradient-to-br from-white/90 to-green-100/90 dark:from-slate-800/90 dark:to-blue-900/90 border-green-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
+            <CardContent className="p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-4xl animate-pulse">🧠</span>
+                <h2 className="text-3xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-green-600 to-teal-600 dark:from-green-300 dark:to-teal-300 bg-clip-text text-transparent">
+                  Why Mental Health Matters 💚
+                </h2>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">🌱</span>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Emotional Growth</h3>
+                      <p className="text-gray-600 dark:text-gray-300">Mental wellness helps you understand and manage your emotions, building resilience for life's challenges.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">🎯</span>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Better Focus</h3>
+                      <p className="text-gray-600 dark:text-gray-300">A healthy mind improves concentration, learning abilities, and academic performance.</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">👫</span>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Stronger Relationships</h3>
+                      <p className="text-gray-600 dark:text-gray-300">Mental wellness helps you connect better with family, friends, and build meaningful relationships.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">🌟</span>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Life Satisfaction</h3>
+                      <p className="text-gray-600 dark:text-gray-300">Taking care of your mental health leads to greater happiness and a more fulfilling life.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Main Content - Fun Preview */}
