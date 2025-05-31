@@ -117,7 +117,7 @@ const Index = () => {
               </div>
               
               {/* Dark Mode Toggle and Features - Top Right */}
-              <div className="flex flex-col items-end gap-4">
+              <div className="flex flex-col items-end gap-6">
                 <Button
                   onClick={toggleDarkMode}
                   className="bg-gradient-to-r from-slate-600 to-slate-700 dark:from-slate-800 dark:to-slate-900 hover:from-slate-700 hover:to-slate-800 dark:hover:from-slate-700 dark:hover:to-slate-800 text-white rounded-full w-16 h-16 text-2xl font-bold transform hover:scale-110 transition-all duration-300"
@@ -125,15 +125,15 @@ const Index = () => {
                   {isDarkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
                 </Button>
                 
-                <div className="flex gap-2">
+                <div className="flex gap-3 flex-wrap justify-end max-w-md">
                   {menuItems.map((item) => (
                     <Button
                       key={item.id}
                       onClick={() => setActiveSection(item.id)}
-                      className={`bg-gradient-to-br ${item.gradient} dark:from-slate-700 dark:to-slate-800 hover:scale-110 text-white p-2 h-auto flex flex-col gap-1 transition-all duration-300 backdrop-blur-sm rounded-2xl border-2 border-white/20 dark:border-slate-600/50 shadow-lg hover:shadow-2xl w-20`}
+                      className={`bg-gradient-to-br ${item.gradient} dark:from-slate-700 dark:to-slate-800 hover:scale-110 text-white p-3 h-auto flex flex-col gap-1 transition-all duration-300 backdrop-blur-sm rounded-2xl border-2 border-white/20 dark:border-slate-600/50 shadow-lg hover:shadow-2xl w-24 min-h-[80px]`}
                     >
                       <span className="text-lg animate-pulse">{item.icon}</span>
-                      <span className="text-xs font-bold text-center leading-tight">{item.label}</span>
+                      <span className="text-xs font-bold text-center leading-tight break-words">{item.label}</span>
                     </Button>
                   ))}
                 </div>
@@ -217,14 +217,14 @@ const Index = () => {
           </Card>
         </div>
 
-        {/* Main Content - Fun Preview */}
+        {/* AI-Enhanced Mood Tracker Preview */}
         <div className="mt-12">
           <Card className="bg-gradient-to-br from-white/80 to-pink-100/80 dark:from-slate-800/90 dark:to-blue-900/90 border-purple-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
             <CardContent className="p-8">
               <div className="flex items-center gap-3 mb-6">
-                <span className="text-4xl animate-bounce">😊</span>
+                <span className="text-4xl animate-bounce">🤖</span>
                 <h2 className="text-3xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-purple-600 to-pink-600 dark:from-blue-300 dark:to-indigo-300 bg-clip-text text-transparent">
-                  How Are You Feeling Today? 🎭
+                  AI-Powered Mood Insights 🎭
                 </h2>
               </div>
               
@@ -240,13 +240,13 @@ const Index = () => {
 
               <div className="bg-gradient-to-r from-pink-200/50 to-purple-200/50 dark:from-slate-700/50 dark:to-blue-800/50 rounded-3xl p-6 mb-6 border-2 border-dashed border-pink-300/50 dark:border-slate-600/50">
                 <textarea 
-                  placeholder="🌟 Tell me about your day... What made you smile? 🌟"
+                  placeholder="🌟 Tell me about your day... AI will analyze your emotions and provide personalized insights! 🌟"
                   className="w-full bg-transparent text-gray-700 dark:text-white placeholder-purple-500 dark:placeholder-blue-300 resize-none border-none outline-none text-lg font-medium"
                   rows={3}
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="bg-gradient-to-br from-orange-200/50 to-red-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-orange-300/50 dark:border-slate-600/50 border-2 rounded-3xl">
                   <CardContent className="p-6 text-center">
                     <div className="text-4xl font-bold text-orange-600 dark:text-orange-400 mb-2">🔥 0</div>
@@ -257,6 +257,12 @@ const Index = () => {
                   <CardContent className="p-6 text-center">
                     <div className="text-4xl font-bold text-cyan-600 dark:text-cyan-400 mb-2">⭐ 0</div>
                     <div className="text-cyan-600 dark:text-cyan-300 font-medium">Mood Score</div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-gradient-to-br from-green-200/50 to-emerald-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-green-300/50 dark:border-slate-600/50 border-2 rounded-3xl">
+                  <CardContent className="p-6 text-center">
+                    <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">🤖 AI</div>
+                    <div className="text-green-600 dark:text-green-300 font-medium">Insights Ready</div>
                   </CardContent>
                 </Card>
               </div>

@@ -8,6 +8,8 @@ const VentSpace = () => {
   const [journalEntry, setJournalEntry] = useState('');
   const [shareAnonymously, setShareAnonymously] = useState(false);
   const [analysisText, setAnalysisText] = useState('');
+  const [aiAnalysis, setAiAnalysis] = useState('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const handleSaveEntry = () => {
     console.log('Saving journal entry:', { journalEntry, shareAnonymously });
@@ -15,10 +17,38 @@ const VentSpace = () => {
     setJournalEntry('');
   };
 
-  const handleAnalysis = () => {
-    if (analysisText.trim()) {
-      console.log('Running AI analysis on:', analysisText);
-      // Here you would typically call an AI service
+  const handleAnalysis = async () => {
+    if (!analysisText.trim()) return;
+    
+    setIsAnalyzing(true);
+    try {
+      // Simulate AI analysis (in real app, you'd call an AI service)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Mock AI response based on text sentiment
+      const positiveWords = ['happy', 'joy', 'great', 'wonderful', 'love', 'excited', 'amazing'];
+      const negativeWords = ['sad', 'angry', 'upset', 'worried', 'anxious', 'stressed', 'bad'];
+      
+      const text = analysisText.toLowerCase();
+      const hasPositive = positiveWords.some(word => text.includes(word));
+      const hasNegative = negativeWords.some(word => text.includes(word));
+      
+      let analysis = '';
+      if (hasPositive && !hasNegative) {
+        analysis = '😊 I sense positive emotions! You seem to be feeling happy and optimistic. This is wonderful! Keep nurturing these positive feelings.';
+      } else if (hasNegative && !hasPositive) {
+        analysis = '💙 I detect some challenging emotions. It\'s okay to feel this way - your feelings are valid. Consider talking to someone you trust or trying some relaxation techniques.';
+      } else if (hasPositive && hasNegative) {
+        analysis = '🌈 You seem to have mixed emotions - both positive and challenging feelings. This is completely normal! Life has ups and downs, and you\'re processing them beautifully.';
+      } else {
+        analysis = '🤔 I sense neutral emotions. You might be feeling calm or reflective. This is a good time for self-reflection and planning ahead.';
+      }
+      
+      setAiAnalysis(analysis);
+    } catch (error) {
+      setAiAnalysis('🤖 Sorry, I had trouble analyzing your text. Please try again!');
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 
@@ -68,7 +98,7 @@ const VentSpace = () => {
           <Card className="bg-gradient-to-r from-blue-200/50 to-cyan-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-cyan-300/50 dark:border-slate-600/50 border-2 rounded-3xl">
             <CardContent className="p-6">
               <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                🤖 Mood Detective AI 🔍
+                🤖 AI Mood Detective 🔍
               </h3>
               <div className="mb-4">
                 <textarea 
@@ -82,10 +112,17 @@ const VentSpace = () => {
               <Button 
                 onClick={handleAnalysis}
                 className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 dark:from-slate-600 dark:to-blue-700 hover:from-cyan-600 hover:to-blue-600 dark:hover:from-slate-500 dark:hover:to-blue-600 text-white text-lg font-bold py-3 rounded-2xl transform hover:scale-105 transition-all duration-300"
-                disabled={!analysisText.trim()}
+                disabled={!analysisText.trim() || isAnalyzing}
               >
-                🎯 Analyze My Feelings!
+                {isAnalyzing ? '🔄 Analyzing...' : '🎯 Analyze My Feelings!'}
               </Button>
+              
+              {aiAnalysis && (
+                <div className="mt-4 p-4 bg-gradient-to-r from-green-100/50 to-blue-100/50 dark:from-slate-600/50 dark:to-blue-700/50 rounded-2xl border border-green-300/30 dark:border-slate-500/30">
+                  <h4 className="font-bold text-gray-800 dark:text-white mb-2">🎭 AI Analysis:</h4>
+                  <p className="text-gray-700 dark:text-gray-200">{aiAnalysis}</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
