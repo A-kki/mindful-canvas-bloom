@@ -14,7 +14,6 @@ const YogaSadhna = () => {
   const [isPaused, setIsPaused] = useState(false);
   const { toast } = useToast();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const tickingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const yogaTypes = [
@@ -71,41 +70,25 @@ const YogaSadhna = () => {
     };
   }, []);
 
-  const playTickingSound = () => {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-    
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.1);
-  };
-
-  const startContinuousTicking = () => {
-    tickingIntervalRef.current = setInterval(() => {
-      playTickingSound();
-    }, 1000); // Tick every second
-  };
-
-  const stopContinuousTicking = () => {
-    if (tickingIntervalRef.current) {
-      clearInterval(tickingIntervalRef.current);
-      tickingIntervalRef.current = null;
-    }
-  };
-
   const playFinalTickingSound = () => {
     // Play ticking sound for 2 seconds
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    
     let tickCount = 0;
     const finalTickInterval = setInterval(() => {
-      playTickingSound();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.1);
+      
       tickCount++;
       if (tickCount >= 4) { // 2 seconds worth of ticks (every 0.5 seconds)
         clearInterval(finalTickInterval);
@@ -119,8 +102,7 @@ const YogaSadhna = () => {
       intervalRef.current = setInterval(() => {
         setTimeRemaining(time => {
           if (time <= 1) {
-            // Time's up - stop everything and play final ticking
-            stopContinuousTicking();
+            // Time's up - stop background music and play final ticking
             if (audioRef.current) {
               audioRef.current.pause();
             }
@@ -159,9 +141,6 @@ const YogaSadhna = () => {
       audioRef.current.play().catch(console.error);
     }
     
-    // Start continuous ticking
-    startContinuousTicking();
-    
     toast({
       title: "Session Started",
       description: `Starting ${currentYoga?.name} for ${duration[0]} minutes`,
@@ -173,13 +152,11 @@ const YogaSadhna = () => {
     
     if (!isPaused) {
       // Pausing
-      stopContinuousTicking();
       if (audioRef.current) {
         audioRef.current.pause();
       }
     } else {
       // Resuming
-      startContinuousTicking();
       if (audioRef.current) {
         audioRef.current.play().catch(console.error);
       }
@@ -191,8 +168,7 @@ const YogaSadhna = () => {
     setIsPaused(false);
     setTimeRemaining(0);
     
-    // Stop all audio
-    stopContinuousTicking();
+    // Stop background audio
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -281,7 +257,7 @@ const YogaSadhna = () => {
 
                 {isActive && (
                   <div className="text-cyan-400 mb-4 text-sm">
-                    🎵 Background music playing • 🔔 Continuous ticking
+                    🎵 Background music playing
                   </div>
                 )}
 
