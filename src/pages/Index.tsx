@@ -110,7 +110,7 @@ const Index = () => {
                 </div>
                 <div>
                   <h1 className="text-5xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-purple-600 to-pink-600 dark:from-blue-300 dark:to-indigo-300 bg-clip-text text-transparent">
-                    MindWell Kids! 
+                    MindWell 
                   </h1>
                   <p className="text-purple-600 dark:text-blue-300 text-xl font-medium">Your Magical Wellness Adventure! ✨</p>
                 </div>
@@ -125,14 +125,14 @@ const Index = () => {
                   {isDarkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
                 </Button>
                 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="flex gap-2">
                   {menuItems.map((item) => (
                     <Button
                       key={item.id}
                       onClick={() => setActiveSection(item.id)}
-                      className={`bg-gradient-to-br ${item.gradient} dark:from-slate-700 dark:to-slate-800 hover:scale-110 text-white p-3 h-auto flex flex-col gap-1 transition-all duration-300 backdrop-blur-sm rounded-2xl border-2 border-white/20 dark:border-slate-600/50 shadow-lg hover:shadow-2xl w-24`}
+                      className={`bg-gradient-to-br ${item.gradient} dark:from-slate-700 dark:to-slate-800 hover:scale-110 text-white p-2 h-auto flex flex-col gap-1 transition-all duration-300 backdrop-blur-sm rounded-2xl border-2 border-white/20 dark:border-slate-600/50 shadow-lg hover:shadow-2xl w-20`}
                     >
-                      <span className="text-xl animate-pulse">{item.icon}</span>
+                      <span className="text-lg animate-pulse">{item.icon}</span>
                       <span className="text-xs font-bold text-center leading-tight">{item.label}</span>
                     </Button>
                   ))}
