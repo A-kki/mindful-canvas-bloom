@@ -116,7 +116,7 @@ const Index = () => {
                 </div>
               </div>
               
-              {/* Features Menu - Top Right */}
+              {/* Dark Mode Toggle and Features - Top Right */}
               <div className="flex flex-col items-end gap-4">
                 <Button
                   onClick={toggleDarkMode}
@@ -125,14 +125,14 @@ const Index = () => {
                   {isDarkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
                 </Button>
                 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   {menuItems.map((item) => (
                     <Button
                       key={item.id}
                       onClick={() => setActiveSection(item.id)}
-                      className={`bg-gradient-to-br ${item.gradient} dark:from-slate-700 dark:to-slate-800 hover:scale-110 text-white p-4 h-auto flex flex-col gap-2 transition-all duration-300 backdrop-blur-sm rounded-2xl border-2 border-white/20 dark:border-slate-600/50 shadow-lg hover:shadow-2xl w-32`}
+                      className={`bg-gradient-to-br ${item.gradient} dark:from-slate-700 dark:to-slate-800 hover:scale-110 text-white p-3 h-auto flex flex-col gap-1 transition-all duration-300 backdrop-blur-sm rounded-2xl border-2 border-white/20 dark:border-slate-600/50 shadow-lg hover:shadow-2xl w-24`}
                     >
-                      <span className="text-2xl animate-pulse">{item.icon}</span>
+                      <span className="text-xl animate-pulse">{item.icon}</span>
                       <span className="text-xs font-bold text-center leading-tight">{item.label}</span>
                     </Button>
                   ))}
