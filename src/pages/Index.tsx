@@ -1,8 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, LogOut, User } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import MoodTracker from '@/components/MoodTracker';
 import MindfulMinutes from '@/components/MindfulMinutes';
 import VentSpace from '@/components/VentSpace';
@@ -11,9 +13,37 @@ import SereneSchedule from '@/components/SereneSchedule';
 import YogaSadhna from '@/components/YogaSadhna';
 
 const Index = () => {
+  const { user, loading, signOut } = useAuth();
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('home');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentQuote, setCurrentQuote] = useState({ text: '', author: '' });
+
+  // Redirect to auth if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/auth');
+    }
+  }, [user, loading, navigate]);
+
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-pink-400 dark:from-blue-400 dark:to-indigo-500 rounded-full flex items-center justify-center text-3xl animate-bounce mx-auto mb-4">
+            🌈
+          </div>
+          <p className="text-xl font-medium text-gray-600 dark:text-gray-300">Loading MindBloom...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated
+  if (!user) {
+    return null;
+  }
 
   const quotes = [
     { text: "The greatest revolution of our generation is the discovery that human beings, by changing the inner attitudes of their minds, can change the outer aspects of their lives.", author: "William James" },
@@ -116,14 +146,31 @@ const Index = () => {
                 </div>
               </div>
               
-              {/* Dark Mode Toggle and Features - Top Right */}
+              {/* User Actions and Dark Mode Toggle - Top Right */}
               <div className="flex flex-col items-end gap-6">
-                <Button
-                  onClick={toggleDarkMode}
-                  className="bg-gradient-to-r from-slate-600 to-slate-700 dark:from-slate-800 dark:to-slate-900 hover:from-slate-700 hover:to-slate-800 dark:hover:from-slate-700 dark:hover:to-slate-800 text-white rounded-full w-16 h-16 text-2xl font-bold transform hover:scale-110 transition-all duration-300"
-                >
-                  {isDarkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
-                </Button>
+                <div className="flex items-center gap-3">
+                  {user && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                      <User className="w-4 h-4" />
+                      <span>{user.email}</span>
+                    </div>
+                  )}
+                  <Button
+                    onClick={signOut}
+                    variant="outline"
+                    size="sm"
+                    className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </Button>
+                  <Button
+                    onClick={toggleDarkMode}
+                    className="bg-gradient-to-r from-slate-600 to-slate-700 dark:from-slate-800 dark:to-slate-900 hover:from-slate-700 hover:to-slate-800 dark:hover:from-slate-700 dark:hover:to-slate-800 text-white rounded-full w-12 h-12 text-lg font-bold transform hover:scale-110 transition-all duration-300"
+                  >
+                    {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                  </Button>
+                </div>
                 
                 <div className="flex gap-3 flex-wrap justify-end max-w-md">
                   {menuItems.map((item) => (
