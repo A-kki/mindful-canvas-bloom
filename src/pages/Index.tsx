@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import MoodTracker from '@/components/MoodTracker';
 import MindfulMinutes from '@/components/MindfulMinutes';
 import VentSpace from '@/components/VentSpace';
+import SocialFeed from '@/components/SocialFeed';
 import ThoughtGarden from '@/components/ThoughtGarden';
 import SereneSchedule from '@/components/SereneSchedule';
 import YogaSadhna from '@/components/YogaSadhna';
@@ -89,6 +90,7 @@ const Index = () => {
     { id: 'mood', label: 'MoodMate', icon: '😊', component: MoodTracker, gradient: 'from-pink-500 to-purple-500' },
     { id: 'mindful', label: 'MindfulMinutes', icon: '🧘', component: MindfulMinutes, gradient: 'from-blue-500 to-cyan-500' },
     { id: 'vent', label: 'VentSpace', icon: '📝', component: VentSpace, gradient: 'from-purple-500 to-indigo-500' },
+    { id: 'social', label: 'Community', icon: '💬', component: SocialFeed, gradient: 'from-indigo-500 to-purple-500' },
     { id: 'thought', label: 'ThoughtGarden', icon: '🌱', component: ThoughtGarden, gradient: 'from-green-500 to-emerald-500' },
     { id: 'schedule', label: 'SereneSchedule', icon: '📅', component: SereneSchedule, gradient: 'from-orange-500 to-red-500' },
     { id: 'yoga', label: 'Yoga Sadhna', icon: '🧘‍♀️', component: YogaSadhna, gradient: 'from-teal-500 to-blue-500' },

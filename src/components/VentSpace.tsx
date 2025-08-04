@@ -3,18 +3,57 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from "@/hooks/use-toast";
 
 const VentSpace = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [journalEntry, setJournalEntry] = useState('');
   const [shareAnonymously, setShareAnonymously] = useState(false);
   const [analysisText, setAnalysisText] = useState('');
   const [aiAnalysis, setAiAnalysis] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSaveEntry = () => {
-    console.log('Saving journal entry:', { journalEntry, shareAnonymously });
-    // Here you would typically save to a database
-    setJournalEntry('');
+  const handleSaveEntry = async () => {
+    if (!journalEntry.trim() || !user) return;
+    
+    setIsSaving(true);
+    try {
+      const { error } = await supabase
+        .from('vent_posts')
+        .insert([
+          {
+            content: journalEntry.trim(),
+            user_id: user.id,
+            is_anonymous: shareAnonymously
+          }
+        ]);
+
+      if (error) throw error;
+
+      toast({
+        title: shareAnonymously ? "🌟 Shared anonymously!" : "💝 Entry saved!",
+        description: shareAnonymously 
+          ? "Your story is now visible to the community" 
+          : "Your private entry has been saved securely",
+      });
+
+      setJournalEntry('');
+      setShareAnonymously(false);
+    } catch (error) {
+      console.error('Error saving entry:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save your entry. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleAnalysis = async () => {
@@ -65,13 +104,15 @@ const VentSpace = () => {
 
           <div className="mb-8">
             <div className="bg-gradient-to-r from-purple-200/50 to-pink-200/50 dark:from-slate-700/50 dark:to-blue-800/50 rounded-3xl p-6 mb-4 border-2 border-dashed border-purple-300/50 dark:border-slate-600/50">
-              <textarea 
+              <Textarea 
                 value={journalEntry}
                 onChange={(e) => setJournalEntry(e.target.value)}
                 placeholder="✨ Write your thoughts here... This is your magical safe space! ✨"
-                className="w-full bg-transparent text-gray-700 dark:text-white placeholder-purple-500 dark:placeholder-blue-300 resize-none border-none outline-none text-lg leading-relaxed font-medium"
-                rows={12}
+                className="bg-transparent text-gray-700 dark:text-white placeholder-purple-500 dark:placeholder-blue-300 resize-none border-none outline-none text-lg leading-relaxed font-medium min-h-[300px]"
               />
+              <div className="text-right mt-2 text-sm text-gray-500 dark:text-gray-400">
+                {journalEntry.length}/1000 characters
+              </div>
             </div>
 
             <div className="flex items-center space-x-3 mb-6">
@@ -89,9 +130,16 @@ const VentSpace = () => {
             <Button 
               onClick={handleSaveEntry}
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 dark:from-slate-700 dark:to-blue-800 hover:from-purple-600 hover:to-pink-600 dark:hover:from-slate-600 dark:hover:to-blue-700 text-white py-4 text-xl font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-              disabled={!journalEntry.trim()}
+              disabled={!journalEntry.trim() || isSaving || journalEntry.length > 1000}
             >
-              🌟 Save My Entry! 🌟
+              {isSaving ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  {shareAnonymously ? 'Sharing...' : 'Saving...'}
+                </span>
+              ) : (
+                <>🌟 {shareAnonymously ? 'Share Anonymously!' : 'Save My Entry!'} 🌟</>
+              )}
             </Button>
           </div>
 
@@ -101,12 +149,11 @@ const VentSpace = () => {
                 🤖 AI Mood Detective 🔍
               </h3>
               <div className="mb-4">
-                <textarea 
+                <Textarea 
                   value={analysisText}
                   onChange={(e) => setAnalysisText(e.target.value)}
                   placeholder="🎭 Write something and let me guess how you're feeling..."
-                  className="w-full bg-cyan-100/30 dark:bg-slate-800/30 text-gray-700 dark:text-white placeholder-cyan-600 dark:placeholder-blue-300 resize-none border-2 border-cyan-300/30 dark:border-slate-600/30 rounded-2xl p-4 outline-none text-lg"
-                  rows={4}
+                  className="bg-cyan-100/30 dark:bg-slate-800/30 text-gray-700 dark:text-white placeholder-cyan-600 dark:placeholder-blue-300 border-2 border-cyan-300/30 dark:border-slate-600/30 rounded-2xl text-lg min-h-[100px]"
                 />
               </div>
               <Button 
