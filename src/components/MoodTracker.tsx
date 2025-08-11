@@ -2,10 +2,18 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
+import { Sparkles, Send } from "lucide-react";
 
 const MoodTracker = () => {
   const [selectedMood, setSelectedMood] = useState(null);
   const [moodNote, setMoodNote] = useState('');
+  const [moodInsightText, setMoodInsightText] = useState('');
+  const [selectedEmoji, setSelectedEmoji] = useState('');
+  const [aiInsight, setAiInsight] = useState('');
+  const [isLoadingInsight, setIsLoadingInsight] = useState(false);
+  const [showInsightBox, setShowInsightBox] = useState(false);
 
   const moods = [
     { emoji: '😰', label: 'Worried', value: 1, color: 'from-red-400 to-red-600', darkColor: 'dark:from-red-600 dark:to-red-800' },
@@ -14,6 +22,42 @@ const MoodTracker = () => {
     { emoji: '😊', label: 'Happy', value: 4, color: 'from-yellow-400 to-yellow-600', darkColor: 'dark:from-yellow-600 dark:to-yellow-800' },
     { emoji: '🤩', label: 'Amazing!', value: 5, color: 'from-green-400 to-green-600', darkColor: 'dark:from-green-600 dark:to-green-800' },
   ];
+
+  const quickEmojis = [
+    '😊', '😔', '😴', '😡', '😍', '🤔', '😱', '🥳', '😌', '😤',
+    '🙃', '😭', '😘', '🤯', '😎', '🥺', '😇', '🤪', '😴', '💪'
+  ];
+
+  const getAIMoodInsight = async () => {
+    if (!moodInsightText.trim() && !selectedEmoji) return;
+    
+    setIsLoadingInsight(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('mood-insights', {
+        body: { 
+          moodText: moodInsightText,
+          selectedEmoji: selectedEmoji
+        }
+      });
+      
+      if (error) throw error;
+      setAiInsight(data.insight);
+      setShowInsightBox(true);
+    } catch (error) {
+      console.error('Error getting AI insight:', error);
+      setAiInsight('Sorry, I had trouble connecting. Your feelings are still valid! 💙');
+      setShowInsightBox(true);
+    } finally {
+      setIsLoadingInsight(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      getAIMoodInsight();
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -48,6 +92,76 @@ const MoodTracker = () => {
                 </Card>
               ))}
             </div>
+          </div>
+
+          {/* AI-Powered Mood Insights */}
+          <div className="mb-8">
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+              <Sparkles className="text-purple-500" />
+              AI-Powered Mood Insights 🎭
+            </h3>
+            
+            {/* Emoji Selection */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">Choose an emoji that represents your feeling:</p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {quickEmojis.map((emoji) => (
+                  <button
+                    key={emoji}
+                    onClick={() => setSelectedEmoji(emoji)}
+                    className={`text-2xl p-2 rounded-full transition-all duration-200 hover:scale-110 ${
+                      selectedEmoji === emoji 
+                        ? 'bg-purple-100 dark:bg-purple-900 ring-2 ring-purple-400 scale-110' 
+                        : 'hover:bg-purple-50 dark:hover:bg-purple-950'
+                    }`}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Mood Input with AI */}
+            <div className="bg-gradient-to-r from-purple-100/50 to-pink-100/50 dark:from-slate-700/50 dark:to-purple-900/50 rounded-3xl p-6 border-2 border-dashed border-purple-300/50 dark:border-purple-600/50">
+              <div className="flex gap-3">
+                <Textarea 
+                  value={moodInsightText}
+                  onChange={(e) => setMoodInsightText(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="✨ Share your thoughts and get AI insights... Press Enter to connect! ✨"
+                  className="bg-transparent border-none shadow-none resize-none text-gray-700 dark:text-white placeholder-purple-500 dark:placeholder-purple-300 text-lg font-medium focus-visible:ring-0"
+                  rows={3}
+                />
+                <Button
+                  onClick={getAIMoodInsight}
+                  disabled={isLoadingInsight || (!moodInsightText.trim() && !selectedEmoji)}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl px-6 py-3 min-w-fit"
+                >
+                  {isLoadingInsight ? (
+                    <div className="animate-spin">✨</div>
+                  ) : (
+                    <Send className="w-5 h-5" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* AI Response Box */}
+            {showInsightBox && (
+              <div className="mt-6 bg-gradient-to-r from-indigo-100/50 to-purple-100/50 dark:from-slate-800/50 dark:to-indigo-900/50 rounded-3xl p-6 border-2 border-indigo-300/50 dark:border-indigo-600/50 animate-fade-in">
+                <div className="flex items-start gap-3">
+                  <div className="text-3xl">🤖</div>
+                  <div className="flex-1">
+                    <h4 className="text-lg font-bold text-indigo-700 dark:text-indigo-300 mb-2">
+                      Your AI Mood Companion Says:
+                    </h4>
+                    <p className="text-gray-700 dark:text-gray-200 leading-relaxed">
+                      {aiInsight}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="mb-8">
