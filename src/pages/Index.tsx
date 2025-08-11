@@ -20,32 +20,6 @@ const Index = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentQuote, setCurrentQuote] = useState({ text: '', author: '' });
 
-  // Redirect to auth if not logged in
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
-  }, [user, loading, navigate]);
-
-  // Show loading while checking auth
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-pink-400 dark:from-blue-400 dark:to-indigo-500 rounded-full flex items-center justify-center text-3xl animate-bounce mx-auto mb-4">
-            🌈
-          </div>
-          <p className="text-xl font-medium text-gray-600 dark:text-gray-300">Loading MindBloom...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Don't render anything if not authenticated
-  if (!user) {
-    return null;
-  }
-
   const quotes = [
     { text: "The greatest revolution of our generation is the discovery that human beings, by changing the inner attitudes of their minds, can change the outer aspects of their lives.", author: "William James" },
     { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson" },
@@ -59,6 +33,14 @@ const Index = () => {
     { text: "You are braver than you believe, stronger than you seem, and smarter than you think.", author: "A.A. Milne" }
   ];
 
+  // Redirect to auth if not logged in - ALWAYS call this hook
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/auth');
+    }
+  }, [user, loading, navigate]);
+
+  // Initialize theme and quote - ALWAYS call this hook
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
@@ -85,6 +67,25 @@ const Index = () => {
       localStorage.setItem('theme', 'light');
     }
   };
+
+  // Show loading while checking auth - conditionally render but hooks already called
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-pink-400 dark:from-blue-400 dark:to-indigo-500 rounded-full flex items-center justify-center text-3xl animate-bounce mx-auto mb-4">
+            🌈
+          </div>
+          <p className="text-xl font-medium text-gray-600 dark:text-gray-300">Loading MindBloom...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated - conditionally render but hooks already called
+  if (!user) {
+    return null;
+  }
 
   const menuItems = [
     { id: 'mood', label: 'MoodMate', icon: '😊', component: MoodTracker, gradient: 'from-pink-500 to-purple-500' },
