@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -12,26 +11,50 @@ import SocialFeed from '@/components/SocialFeed';
 import ThoughtGarden from '@/components/ThoughtGarden';
 import SereneSchedule from '@/components/SereneSchedule';
 import YogaSadhna from '@/components/YogaSadhna';
-
 const Index = () => {
-  const { user, loading, signOut } = useAuth();
+  const {
+    user,
+    loading,
+    signOut
+  } = useAuth();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('home');
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [currentQuote, setCurrentQuote] = useState({ text: '', author: '' });
-
-  const quotes = [
-    { text: "The greatest revolution of our generation is the discovery that human beings, by changing the inner attitudes of their minds, can change the outer aspects of their lives.", author: "William James" },
-    { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson" },
-    { text: "The mind is everything. What you think you become.", author: "Buddha" },
-    { text: "You have been critical of yourself for years, and it hasn't worked. Try approving of yourself and see what happens.", author: "Louise Hay" },
-    { text: "Mental health is not a destination, but a process. It's about how you drive, not where you're going.", author: "Noam Shpancer" },
-    { text: "Your mental health is a priority. Your happiness is essential. Your self-care is a necessity.", author: "Unknown" },
-    { text: "It's okay to not be okay. It's not okay to stay that way.", author: "Unknown" },
-    { text: "Healing takes time, and asking for help is a courageous step.", author: "Mariska Hargitay" },
-    { text: "The strongest people are not those who show strength in front of us, but those who win battles we know nothing about.", author: "Unknown" },
-    { text: "You are braver than you believe, stronger than you seem, and smarter than you think.", author: "A.A. Milne" }
-  ];
+  const [currentQuote, setCurrentQuote] = useState({
+    text: '',
+    author: ''
+  });
+  const quotes = [{
+    text: "The greatest revolution of our generation is the discovery that human beings, by changing the inner attitudes of their minds, can change the outer aspects of their lives.",
+    author: "William James"
+  }, {
+    text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+    author: "Ralph Waldo Emerson"
+  }, {
+    text: "The mind is everything. What you think you become.",
+    author: "Buddha"
+  }, {
+    text: "You have been critical of yourself for years, and it hasn't worked. Try approving of yourself and see what happens.",
+    author: "Louise Hay"
+  }, {
+    text: "Mental health is not a destination, but a process. It's about how you drive, not where you're going.",
+    author: "Noam Shpancer"
+  }, {
+    text: "Your mental health is a priority. Your happiness is essential. Your self-care is a necessity.",
+    author: "Unknown"
+  }, {
+    text: "It's okay to not be okay. It's not okay to stay that way.",
+    author: "Unknown"
+  }, {
+    text: "Healing takes time, and asking for help is a courageous step.",
+    author: "Mariska Hargitay"
+  }, {
+    text: "The strongest people are not those who show strength in front of us, but those who win battles we know nothing about.",
+    author: "Unknown"
+  }, {
+    text: "You are braver than you believe, stronger than you seem, and smarter than you think.",
+    author: "A.A. Milne"
+  }];
 
   // Redirect to auth if not logged in - ALWAYS call this hook
   useEffect(() => {
@@ -55,7 +78,6 @@ const Index = () => {
     const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
     setCurrentQuote(randomQuote);
   }, []);
-
   const toggleDarkMode = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
@@ -70,33 +92,63 @@ const Index = () => {
 
   // Show loading while checking auth - conditionally render but hooks already called
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950">
+    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950">
         <div className="text-center">
           <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-pink-400 dark:from-blue-400 dark:to-indigo-500 rounded-full flex items-center justify-center text-3xl animate-bounce mx-auto mb-4">
             🌈
           </div>
           <p className="text-xl font-medium text-gray-600 dark:text-gray-300">Loading MindBloom...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
 
   // Don't render anything if not authenticated - conditionally render but hooks already called
   if (!user) {
     return null;
   }
-
-  const menuItems = [
-    { id: 'mood', label: 'MoodMate', icon: '😊', component: MoodTracker, gradient: 'from-pink-500 to-purple-500' },
-    { id: 'mindful', label: 'MindfulMinutes', icon: '🧘', component: MindfulMinutes, gradient: 'from-blue-500 to-cyan-500' },
-    { id: 'vent', label: 'VentSpace', icon: '📝', component: VentSpace, gradient: 'from-purple-500 to-indigo-500' },
-    { id: 'social', label: 'Community', icon: '💬', component: SocialFeed, gradient: 'from-indigo-500 to-purple-500' },
-    { id: 'thought', label: 'ThoughtGarden', icon: '🌱', component: ThoughtGarden, gradient: 'from-green-500 to-emerald-500' },
-    { id: 'schedule', label: 'SereneSchedule', icon: '📅', component: SereneSchedule, gradient: 'from-orange-500 to-red-500' },
-    { id: 'yoga', label: 'Yoga Sadhna', icon: '🧘‍♀️', component: YogaSadhna, gradient: 'from-teal-500 to-blue-500' },
-  ];
-
+  const menuItems = [{
+    id: 'mood',
+    label: 'MoodMate',
+    icon: '😊',
+    component: MoodTracker,
+    gradient: 'from-pink-500 to-purple-500'
+  }, {
+    id: 'mindful',
+    label: 'MindfulMinutes',
+    icon: '🧘',
+    component: MindfulMinutes,
+    gradient: 'from-blue-500 to-cyan-500'
+  }, {
+    id: 'vent',
+    label: 'VentSpace',
+    icon: '📝',
+    component: VentSpace,
+    gradient: 'from-purple-500 to-indigo-500'
+  }, {
+    id: 'social',
+    label: 'Community',
+    icon: '💬',
+    component: SocialFeed,
+    gradient: 'from-indigo-500 to-purple-500'
+  }, {
+    id: 'thought',
+    label: 'ThoughtGarden',
+    icon: '🌱',
+    component: ThoughtGarden,
+    gradient: 'from-green-500 to-emerald-500'
+  }, {
+    id: 'schedule',
+    label: 'SereneSchedule',
+    icon: '📅',
+    component: SereneSchedule,
+    gradient: 'from-orange-500 to-red-500'
+  }, {
+    id: 'yoga',
+    label: 'Yoga Sadhna',
+    icon: '🧘‍♀️',
+    component: YogaSadhna,
+    gradient: 'from-teal-500 to-blue-500'
+  }];
   const renderActiveComponent = () => {
     const activeItem = menuItems.find(item => item.id === activeSection);
     if (activeItem && activeItem.component) {
@@ -108,29 +160,18 @@ const Index = () => {
 
   // Render component layout based on active section
   const isHome = activeSection === 'home';
-  
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950">
+  return <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950">
       <div className="container mx-auto px-4 py-8">
-        {!isHome && (
-          <div className="flex justify-between items-center mb-6">
-            <Button 
-              onClick={() => setActiveSection('home')}
-              className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white rounded-2xl px-6 py-3 font-bold transform hover:scale-105 transition-all duration-300"
-            >
+        {!isHome && <div className="flex justify-between items-center mb-6">
+            <Button onClick={() => setActiveSection('home')} className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white rounded-2xl px-6 py-3 font-bold transform hover:scale-105 transition-all duration-300">
               🏠 Back to Home
             </Button>
-            <Button
-              onClick={toggleDarkMode}
-              className="bg-gradient-to-r from-slate-600 to-slate-700 dark:from-slate-800 dark:to-slate-900 hover:from-slate-700 hover:to-slate-800 dark:hover:from-slate-700 dark:hover:to-slate-800 text-white rounded-full w-12 h-12 text-lg font-bold transform hover:scale-110 transition-all duration-300"
-            >
+            <Button onClick={toggleDarkMode} className="bg-gradient-to-r from-slate-600 to-slate-700 dark:from-slate-800 dark:to-slate-900 hover:from-slate-700 hover:to-slate-800 dark:hover:from-slate-700 dark:hover:to-slate-800 text-white rounded-full w-12 h-12 text-lg font-bold transform hover:scale-110 transition-all duration-300">
               {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </Button>
-          </div>
-        )}
+          </div>}
         
-        {!isHome ? renderActiveComponent() : (
-          <div className="text-gray-800 dark:text-white transition-all duration-500">
+        {!isHome ? renderActiveComponent() : <div className="text-gray-800 dark:text-white transition-all duration-500">
             {/* Header */}
             <Card className="bg-gradient-to-r from-white/80 to-purple-100/80 dark:from-slate-800/90 dark:to-blue-900/90 border-purple-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
               <CardContent className="p-8">
@@ -150,40 +191,24 @@ const Index = () => {
                   {/* User Actions and Dark Mode Toggle - Top Right */}
                   <div className="flex flex-col items-end gap-6">
                     <div className="flex items-center gap-3">
-                      {user && (
-                        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                      {user && <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                           <User className="w-4 h-4" />
                           <span>{user.email}</span>
-                        </div>
-                      )}
-                      <Button
-                        onClick={signOut}
-                        variant="outline"
-                        size="sm"
-                        className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40"
-                      >
+                        </div>}
+                      <Button onClick={signOut} variant="outline" size="sm" className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40">
                         <LogOut className="w-4 h-4 mr-2" />
                         Logout
                       </Button>
-                      <Button
-                        onClick={toggleDarkMode}
-                        className="bg-gradient-to-r from-slate-600 to-slate-700 dark:from-slate-800 dark:to-slate-900 hover:from-slate-700 hover:to-slate-800 dark:hover:from-slate-700 dark:hover:to-slate-800 text-white rounded-full w-12 h-12 text-lg font-bold transform hover:scale-110 transition-all duration-300"
-                      >
+                      <Button onClick={toggleDarkMode} className="bg-gradient-to-r from-slate-600 to-slate-700 dark:from-slate-800 dark:to-slate-900 hover:from-slate-700 hover:to-slate-800 dark:hover:from-slate-700 dark:hover:to-slate-800 text-white rounded-full w-12 h-12 text-lg font-bold transform hover:scale-110 transition-all duration-300">
                         {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                       </Button>
                     </div>
                     
                     <div className="flex gap-3 flex-wrap justify-end max-w-md">
-                      {menuItems.map((item) => (
-                        <Button
-                          key={item.id}
-                          onClick={() => setActiveSection(item.id)}
-                          className={`bg-gradient-to-br ${item.gradient} dark:from-slate-700 dark:to-slate-800 hover:scale-110 text-white p-3 h-auto flex flex-col gap-1 transition-all duration-300 backdrop-blur-sm rounded-2xl border-2 border-white/20 dark:border-slate-600/50 shadow-lg hover:shadow-2xl w-24 min-h-[80px]`}
-                        >
+                      {menuItems.map(item => <Button key={item.id} onClick={() => setActiveSection(item.id)} className={`bg-gradient-to-br ${item.gradient} dark:from-slate-700 dark:to-slate-800 hover:scale-110 text-white p-3 h-auto flex flex-col gap-1 transition-all duration-300 backdrop-blur-sm rounded-2xl border-2 border-white/20 dark:border-slate-600/50 shadow-lg hover:shadow-2xl w-24 min-h-[80px]`}>
                           <span className="text-lg animate-pulse">{item.icon}</span>
                           <span className="text-xs font-bold text-center leading-tight break-words">{item.label}</span>
-                        </Button>
-                      ))}
+                        </Button>)}
                     </div>
                   </div>
                 </div>
@@ -268,60 +293,11 @@ const Index = () => {
             {/* AI-Enhanced Mood Tracker Preview */}
             <div className="mt-12">
               <Card className="bg-gradient-to-br from-white/80 to-pink-100/80 dark:from-slate-800/90 dark:to-blue-900/90 border-purple-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
-                <CardContent className="p-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <span className="text-4xl animate-bounce">🤖</span>
-                    <h2 className="text-3xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-purple-600 to-pink-600 dark:from-blue-300 dark:to-indigo-300 bg-clip-text text-transparent">
-                      AI-Powered Mood Insights 🎭
-                    </h2>
-                  </div>
-                  
-                  <div className="grid grid-cols-5 gap-4 mb-6">
-                    {['😰', '😢', '😐', '😊', '🤩'].map((emoji, index) => (
-                      <Card key={index} className="bg-gradient-to-br from-purple-200/50 to-pink-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-purple-300/50 dark:border-slate-600/50 border-2 hover:scale-110 transition-all duration-300 cursor-pointer rounded-3xl">
-                        <CardContent className="p-6 text-center">
-                          <div className="text-5xl mb-2 transform hover:scale-125 transition-transform duration-200">{emoji}</div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-
-                  <div className="bg-gradient-to-r from-pink-200/50 to-purple-200/50 dark:from-slate-700/50 dark:to-blue-800/50 rounded-3xl p-6 mb-6 border-2 border-dashed border-pink-300/50 dark:border-slate-600/50">
-                    <textarea 
-                      placeholder="🌟 Tell me about your day... AI will analyze your emotions and provide personalized insights! 🌟"
-                      className="w-full bg-transparent text-gray-700 dark:text-white placeholder-purple-500 dark:placeholder-blue-300 resize-none border-none outline-none text-lg font-medium"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="bg-gradient-to-br from-orange-200/50 to-red-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-orange-300/50 dark:border-slate-600/50 border-2 rounded-3xl">
-                      <CardContent className="p-6 text-center">
-                        <div className="text-4xl font-bold text-orange-600 dark:text-orange-400 mb-2">🔥 0</div>
-                        <div className="text-orange-600 dark:text-orange-300 font-medium">Day Streak!</div>
-                      </CardContent>
-                    </Card>
-                    <Card className="bg-gradient-to-br from-cyan-200/50 to-blue-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-cyan-300/50 dark:border-slate-600/50 border-2 rounded-3xl">
-                      <CardContent className="p-6 text-center">
-                        <div className="text-4xl font-bold text-cyan-600 dark:text-cyan-400 mb-2">⭐ 0</div>
-                        <div className="text-cyan-600 dark:text-cyan-300 font-medium">Mood Score</div>
-                      </CardContent>
-                    </Card>
-                    <Card className="bg-gradient-to-br from-green-200/50 to-emerald-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-green-300/50 dark:border-slate-600/50 border-2 rounded-3xl">
-                      <CardContent className="p-6 text-center">
-                        <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">🤖 AI</div>
-                        <div className="text-green-600 dark:text-green-300 font-medium">Insights Ready</div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CardContent>
+                
               </Card>
             </div>
-          </div>
-        )}
+          </div>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
