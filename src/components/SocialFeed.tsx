@@ -2,12 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Heart, MessageCircle, Clock } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Heart, MessageCircle, Clock, Send } from 'lucide-react';
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from "@/hooks/use-toast";
 
 interface VentPost {
+  id: string;
+  content: string;
+  created_at: string;
+  is_anonymous: boolean;
+  user_id: string;
+  like_count?: number;
+  comment_count?: number;
+  user_has_liked?: boolean;
+}
+
+interface Comment {
   id: string;
   content: string;
   created_at: string;
@@ -20,6 +32,10 @@ const SocialFeed = () => {
   const { toast } = useToast();
   const [posts, setPosts] = useState<VentPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+  const [comments, setComments] = useState<{ [postId: string]: Comment[] }>({});
+  const [newComment, setNewComment] = useState<{ [postId: string]: string }>({});
+  const [loadingComments, setLoadingComments] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (user) {
@@ -32,13 +48,25 @@ const SocialFeed = () => {
     try {
       const { data, error } = await supabase
         .from('vent_posts')
-        .select('*')
+        .select(`
+          *,
+          vent_post_likes!left(user_id),
+          vent_post_comments!left(id)
+        `)
         .eq('is_anonymous', true)
         .order('created_at', { ascending: false })
         .limit(50);
 
       if (error) throw error;
-      setPosts(data || []);
+      
+      const postsWithCounts = (data || []).map(post => ({
+        ...post,
+        like_count: post.vent_post_likes?.length || 0,
+        comment_count: post.vent_post_comments?.length || 0,
+        user_has_liked: user ? post.vent_post_likes?.some((like: any) => like.user_id === user.id) : false,
+      }));
+      
+      setPosts(postsWithCounts);
     } catch (error) {
       console.error('Error fetching posts:', error);
       toast({
@@ -76,6 +104,136 @@ const SocialFeed = () => {
     return () => {
       supabase.removeChannel(channel);
     };
+  };
+
+  const handleLike = async (postId: string) => {
+    if (!user) return;
+    
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+
+    try {
+      if (post.user_has_liked) {
+        // Unlike
+        await supabase
+          .from('vent_post_likes')
+          .delete()
+          .eq('post_id', postId)
+          .eq('user_id', user.id);
+        
+        setPosts(prev => prev.map(p => p.id === postId ? {
+          ...p,
+          like_count: (p.like_count || 0) - 1,
+          user_has_liked: false
+        } : p));
+      } else {
+        // Like
+        await supabase
+          .from('vent_post_likes')
+          .insert({ post_id: postId, user_id: user.id });
+        
+        setPosts(prev => prev.map(p => p.id === postId ? {
+          ...p,
+          like_count: (p.like_count || 0) + 1,
+          user_has_liked: true
+        } : p));
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update like. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const fetchComments = async (postId: string) => {
+    if (loadingComments.has(postId)) return;
+    
+    setLoadingComments(prev => new Set([...prev, postId]));
+    
+    try {
+      const { data, error } = await supabase
+        .from('vent_post_comments')
+        .select('*')
+        .eq('post_id', postId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      setComments(prev => ({ ...prev, [postId]: data || [] }));
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load comments. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingComments(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(postId);
+        return newSet;
+      });
+    }
+  };
+
+  const toggleComments = (postId: string) => {
+    setExpandedComments(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(postId)) {
+        newSet.delete(postId);
+      } else {
+        newSet.add(postId);
+        if (!comments[postId]) {
+          fetchComments(postId);
+        }
+      }
+      return newSet;
+    });
+  };
+
+  const handleComment = async (postId: string) => {
+    if (!user || !newComment[postId]?.trim()) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('vent_post_comments')
+        .insert({
+          post_id: postId,
+          user_id: user.id,
+          content: newComment[postId].trim(),
+          is_anonymous: true
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setComments(prev => ({
+        ...prev,
+        [postId]: [...(prev[postId] || []), data]
+      }));
+      
+      setPosts(prev => prev.map(p => p.id === postId ? {
+        ...p,
+        comment_count: (p.comment_count || 0) + 1
+      } : p));
+
+      setNewComment(prev => ({ ...prev, [postId]: '' }));
+      
+      toast({
+        title: "Comment added! 💬",
+        description: "Your anonymous comment has been shared.",
+      });
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add comment. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const formatTimeAgo = (timestamp: string) => {
@@ -181,15 +339,84 @@ const SocialFeed = () => {
                         </div>
                         
                         <div className="flex items-center gap-4">
-                          <Button variant="ghost" size="sm" className="text-purple-600 dark:text-blue-300 hover:bg-purple-100 dark:hover:bg-blue-900/30">
-                            <Heart className="w-4 h-4 mr-1" />
-                            Support
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => handleLike(post.id)}
+                            className={`transition-colors ${
+                              post.user_has_liked 
+                                ? 'text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20' 
+                                : 'text-purple-600 dark:text-blue-300 hover:bg-purple-100 dark:hover:bg-blue-900/30'
+                            }`}
+                          >
+                            <Heart className={`w-4 h-4 mr-1 ${post.user_has_liked ? 'fill-current' : ''}`} />
+                            {post.like_count || 0}
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-purple-600 dark:text-blue-300 hover:bg-purple-100 dark:hover:bg-blue-900/30">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => toggleComments(post.id)}
+                            className="text-purple-600 dark:text-blue-300 hover:bg-purple-100 dark:hover:bg-blue-900/30"
+                          >
                             <MessageCircle className="w-4 h-4 mr-1" />
-                            Relate
+                            {post.comment_count || 0}
                           </Button>
                         </div>
+
+                        {/* Comments Section */}
+                        {expandedComments.has(post.id) && (
+                          <div className="mt-4 space-y-3">
+                            {loadingComments.has(post.id) ? (
+                              <div className="space-y-2">
+                                {[1, 2].map(i => (
+                                  <Skeleton key={i} className="h-12 w-full" />
+                                ))}
+                              </div>
+                            ) : (
+                              <>
+                                {comments[post.id]?.map((comment) => (
+                                  <div key={comment.id} className="bg-gray-50 dark:bg-slate-600/30 rounded-xl p-3">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <div className="w-6 h-6 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-xs">
+                                        🗨️
+                                      </div>
+                                      <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                                        Anonymous
+                                      </span>
+                                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                                        {formatTimeAgo(comment.created_at)}
+                                      </span>
+                                    </div>
+                                    <p className="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
+                                      {comment.content}
+                                    </p>
+                                  </div>
+                                ))}
+                                
+                                {/* Add Comment Form */}
+                                {user && (
+                                  <div className="flex gap-2 pt-2">
+                                    <Input
+                                      placeholder="Add an anonymous comment..."
+                                      value={newComment[post.id] || ''}
+                                      onChange={(e) => setNewComment(prev => ({ ...prev, [post.id]: e.target.value }))}
+                                      onKeyPress={(e) => e.key === 'Enter' && handleComment(post.id)}
+                                      className="flex-1"
+                                    />
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleComment(post.id)}
+                                      disabled={!newComment[post.id]?.trim()}
+                                      className="bg-purple-600 hover:bg-purple-700 dark:bg-blue-600 dark:hover:bg-blue-700"
+                                    >
+                                      <Send className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>
