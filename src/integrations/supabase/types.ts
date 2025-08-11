@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      cbt_thought_entries: {
+        Row: {
+          ai_suggestion: string | null
+          automatic_thought: string
+          balanced_thought: string | null
+          created_at: string
+          distortion: string | null
+          emotion: string | null
+          id: string
+          situation: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_suggestion?: string | null
+          automatic_thought: string
+          balanced_thought?: string | null
+          created_at?: string
+          distortion?: string | null
+          emotion?: string | null
+          id?: string
+          situation?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_suggestion?: string | null
+          automatic_thought?: string
+          balanced_thought?: string | null
+          created_at?: string
+          distortion?: string | null
+          emotion?: string | null
+          id?: string
+          situation?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       mindful_sessions: {
         Row: {
           completed: boolean

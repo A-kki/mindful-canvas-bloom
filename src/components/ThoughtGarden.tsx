@@ -3,14 +3,23 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const ThoughtGarden = () => {
+  const { toast } = useToast();
+  const { user } = useAuth();
   const [situation, setSituation] = useState('');
   const [automaticThought, setAutomaticThought] = useState('');
   const [emotion, setEmotion] = useState('');
   const [cognitiveDistortion, setCognitiveDistortion] = useState('');
   const [balancedThought, setBalancedThought] = useState('');
   const [aiSuggestion, setAiSuggestion] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [patternLoading, setPatternLoading] = useState(false);
+  const [patternInsights, setPatternInsights] = useState<string>('');
 
   const distortions = [
     'All-or-Nothing Thinking',
@@ -25,30 +34,51 @@ const ThoughtGarden = () => {
     'Personalization'
   ];
 
-  const generateAISuggestion = () => {
-    if (!automaticThought.trim()) return;
-    
-    // Mock AI suggestion based on common CBT reframing techniques
-    const suggestions = [
-      "Try asking yourself: Is this thought based on facts or feelings? What evidence supports or contradicts this thought?",
-      "Consider: What would you tell a good friend who had this same thought? How can you show yourself the same kindness?",
-      "Think about: What's the worst, best, and most realistic outcome? Often reality lies somewhere in the middle.",
-      "Reflect on: How will this matter in 5 years? Sometimes stepping back helps us see the bigger picture.",
-      "Ask yourself: What can I control in this situation? Focus your energy on what's within your power to change."
-    ];
-    
-    const randomSuggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
-    setAiSuggestion(randomSuggestion);
-  };
-
-  const handleSave = () => {
-    console.log('Saving thought entry:', {
-      situation,
-      automaticThought,
-      emotion,
-      cognitiveDistortion,
-      balancedThought
+const generateAISuggestion = async () => {
+  if (!automaticThought.trim()) return;
+  try {
+    setAiLoading(true);
+    const { data, error } = await supabase.functions.invoke('cbt-insights', {
+      body: {
+        mode: 'coach',
+        situation,
+        automaticThought,
+        emotion,
+        distortion: cognitiveDistortion,
+      },
     });
+    if (error) throw error;
+    setAiSuggestion(data?.suggestion || '');
+    if (!data?.suggestion) {
+      toast({ title: 'AI note', description: 'No suggestion returned. Try again.', duration: 4000 });
+    }
+  } catch (err: any) {
+    console.error('AI coach error:', err);
+    toast({ title: 'AI error', description: 'Unable to generate suggestion right now.', duration: 5000 });
+  } finally {
+    setAiLoading(false);
+  }
+};
+
+const handleSave = async () => {
+  if (!user) {
+    toast({ title: 'Sign in required', description: 'Please sign in to save your entries.', duration: 5000 });
+    return;
+  }
+  try {
+    setSaving(true);
+    const { error } = await supabase.from('cbt_thought_entries').insert({
+      user_id: user.id,
+      situation,
+      automatic_thought: automaticThought,
+      emotion,
+      distortion: cognitiveDistortion,
+      balanced_thought: balancedThought,
+      ai_suggestion: aiSuggestion,
+    });
+    if (error) throw error;
+    toast({ title: 'Saved', description: 'Your thought entry has been saved.', duration: 4000 });
+
     // Reset form
     setSituation('');
     setAutomaticThought('');
@@ -56,6 +86,44 @@ const ThoughtGarden = () => {
     setCognitiveDistortion('');
     setBalancedThought('');
     setAiSuggestion('');
+  } catch (err: any) {
+    console.error('Save error:', err);
+    toast({ title: 'Save failed', description: 'Unable to save entry. Please try again.', duration: 5000 });
+  } finally {
+    setSaving(false);
+  }
+};
+
+  const analyzePatterns = async () => {
+    if (!user) {
+      toast({ title: 'Sign in required', description: 'Please sign in to analyze patterns.', duration: 5000 });
+      return;
+    }
+    try {
+      setPatternLoading(true);
+      const { data: entries, error } = await supabase
+        .from('cbt_thought_entries')
+        .select('id, automatic_thought, emotion, distortion, balanced_thought, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
+      if (error) throw error;
+
+      const { data, error: fnError } = await supabase.functions.invoke('cbt-insights', {
+        body: { mode: 'patterns', entries: entries || [] },
+      });
+      if (fnError) throw fnError;
+
+      setPatternInsights(data?.summary || '');
+      if (!data?.summary) {
+        toast({ title: 'AI note', description: 'No insights returned. Try again later.', duration: 4000 });
+      }
+    } catch (err: any) {
+      console.error('Pattern analysis error:', err);
+      toast({ title: 'Analysis failed', description: 'Unable to analyze patterns right now.', duration: 5000 });
+    } finally {
+      setPatternLoading(false);
+    }
   };
 
   return (
@@ -94,12 +162,13 @@ const ThoughtGarden = () => {
                   rows={3}
                 />
               </div>
-              {automaticThought && (
+{automaticThought && (
                 <Button 
                   onClick={generateAISuggestion}
+                  disabled={aiLoading}
                   className="mt-3 bg-gradient-to-r from-blue-500 to-cyan-500 dark:from-slate-600 dark:to-blue-700 hover:from-blue-600 hover:to-cyan-600 text-white px-4 py-2 rounded-lg text-sm transform hover:scale-105 transition-all duration-300"
                 >
-                  🤖 Get AI Reframing Suggestion
+                  {aiLoading ? 'Generating…' : '🤖 Get AI Reframing Suggestion'}
                 </Button>
               )}
             </div>
@@ -158,9 +227,9 @@ const ThoughtGarden = () => {
             <Button 
               onClick={handleSave}
               className="w-full bg-gradient-to-r from-green-500 to-emerald-500 dark:from-slate-700 dark:to-blue-800 hover:from-green-600 hover:to-emerald-600 dark:hover:from-slate-600 dark:hover:to-blue-700 text-white py-4 text-xl font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-              disabled={!situation || !automaticThought}
+              disabled={!situation || !automaticThought || saving}
             >
-              🌱 Save Thought Entry
+              {saving ? 'Saving…' : '🌱 Save Thought Entry'}
             </Button>
           </div>
 
