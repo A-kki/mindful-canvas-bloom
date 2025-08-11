@@ -105,10 +105,13 @@ const Index = () => {
     return null;
   };
 
-  if (activeSection !== 'home') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950">
-        <div className="container mx-auto px-4 py-8">
+  // Render component layout based on active section
+  const isHome = activeSection === 'home';
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950">
+      <div className="container mx-auto px-4 py-8">
+        {!isHome && (
           <div className="flex justify-between items-center mb-6">
             <Button 
               onClick={() => setActiveSection('home')}
@@ -123,201 +126,198 @@ const Index = () => {
               {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </Button>
           </div>
-          {renderActiveComponent()}
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950 text-gray-800 dark:text-white transition-all duration-500">
-      {/* Header */}
-      <div className="container mx-auto px-4 py-8">
-        <Card className="bg-gradient-to-r from-white/80 to-purple-100/80 dark:from-slate-800/90 dark:to-blue-900/90 border-purple-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
-          <CardContent className="p-8">
-            <div className="flex justify-between items-start">
-              <div className="flex items-center gap-4 flex-1">
-                <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-pink-400 dark:from-blue-400 dark:to-indigo-500 rounded-full flex items-center justify-center text-3xl animate-bounce">
-                  🌈
-                </div>
-                <div>
-                  <h1 className="text-5xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-purple-600 to-pink-600 dark:from-blue-300 dark:to-indigo-300 bg-clip-text text-transparent">
-                    MindWell 
-                  </h1>
-                  <p className="text-purple-600 dark:text-blue-300 text-xl font-medium">Your Magical Wellness Adventure! ✨</p>
-                </div>
-              </div>
-              
-              {/* User Actions and Dark Mode Toggle - Top Right */}
-              <div className="flex flex-col items-end gap-6">
-                <div className="flex items-center gap-3">
-                  {user && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                      <User className="w-4 h-4" />
-                      <span>{user.email}</span>
+        )}
+        
+        {!isHome ? renderActiveComponent() : (
+          <div className="text-gray-800 dark:text-white transition-all duration-500">
+            {/* Header */}
+            <Card className="bg-gradient-to-r from-white/80 to-purple-100/80 dark:from-slate-800/90 dark:to-blue-900/90 border-purple-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
+              <CardContent className="p-8">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-pink-400 dark:from-blue-400 dark:to-indigo-500 rounded-full flex items-center justify-center text-3xl animate-bounce">
+                      🌈
                     </div>
-                  )}
-                  <Button
-                    onClick={signOut}
-                    variant="outline"
-                    size="sm"
-                    className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40"
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Logout
-                  </Button>
-                  <Button
-                    onClick={toggleDarkMode}
-                    className="bg-gradient-to-r from-slate-600 to-slate-700 dark:from-slate-800 dark:to-slate-900 hover:from-slate-700 hover:to-slate-800 dark:hover:from-slate-700 dark:hover:to-slate-800 text-white rounded-full w-12 h-12 text-lg font-bold transform hover:scale-110 transition-all duration-300"
-                  >
-                    {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                  </Button>
+                    <div>
+                      <h1 className="text-5xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-purple-600 to-pink-600 dark:from-blue-300 dark:to-indigo-300 bg-clip-text text-transparent">
+                        MindWell 
+                      </h1>
+                      <p className="text-purple-600 dark:text-blue-300 text-xl font-medium">Your Magical Wellness Adventure! ✨</p>
+                    </div>
+                  </div>
+                  
+                  {/* User Actions and Dark Mode Toggle - Top Right */}
+                  <div className="flex flex-col items-end gap-6">
+                    <div className="flex items-center gap-3">
+                      {user && (
+                        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                          <User className="w-4 h-4" />
+                          <span>{user.email}</span>
+                        </div>
+                      )}
+                      <Button
+                        onClick={signOut}
+                        variant="outline"
+                        size="sm"
+                        className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40"
+                      >
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Logout
+                      </Button>
+                      <Button
+                        onClick={toggleDarkMode}
+                        className="bg-gradient-to-r from-slate-600 to-slate-700 dark:from-slate-800 dark:to-slate-900 hover:from-slate-700 hover:to-slate-800 dark:hover:from-slate-700 dark:hover:to-slate-800 text-white rounded-full w-12 h-12 text-lg font-bold transform hover:scale-110 transition-all duration-300"
+                      >
+                        {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                      </Button>
+                    </div>
+                    
+                    <div className="flex gap-3 flex-wrap justify-end max-w-md">
+                      {menuItems.map((item) => (
+                        <Button
+                          key={item.id}
+                          onClick={() => setActiveSection(item.id)}
+                          className={`bg-gradient-to-br ${item.gradient} dark:from-slate-700 dark:to-slate-800 hover:scale-110 text-white p-3 h-auto flex flex-col gap-1 transition-all duration-300 backdrop-blur-sm rounded-2xl border-2 border-white/20 dark:border-slate-600/50 shadow-lg hover:shadow-2xl w-24 min-h-[80px]`}
+                        >
+                          <span className="text-lg animate-pulse">{item.icon}</span>
+                          <span className="text-xs font-bold text-center leading-tight break-words">{item.label}</span>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                
-                <div className="flex gap-3 flex-wrap justify-end max-w-md">
-                  {menuItems.map((item) => (
-                    <Button
-                      key={item.id}
-                      onClick={() => setActiveSection(item.id)}
-                      className={`bg-gradient-to-br ${item.gradient} dark:from-slate-700 dark:to-slate-800 hover:scale-110 text-white p-3 h-auto flex flex-col gap-1 transition-all duration-300 backdrop-blur-sm rounded-2xl border-2 border-white/20 dark:border-slate-600/50 shadow-lg hover:shadow-2xl w-24 min-h-[80px]`}
-                    >
-                      <span className="text-lg animate-pulse">{item.icon}</span>
-                      <span className="text-xs font-bold text-center leading-tight break-words">{item.label}</span>
-                    </Button>
-                  ))}
-                </div>
-              </div>
+              </CardContent>
+            </Card>
+
+            {/* Daily Quote Section */}
+            <div className="mt-8">
+              <Card className="bg-gradient-to-br from-white/90 to-yellow-100/90 dark:from-slate-800/90 dark:to-blue-900/90 border-yellow-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
+                <CardContent className="p-8 text-center">
+                  <div className="flex items-center justify-center gap-3 mb-6">
+                    <span className="text-4xl animate-pulse">💫</span>
+                    <h2 className="text-3xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-yellow-600 to-orange-600 dark:from-yellow-300 dark:to-orange-300 bg-clip-text text-transparent">
+                      Today's Inspiration
+                    </h2>
+                    <span className="text-4xl animate-pulse">✨</span>
+                  </div>
+                  
+                  <blockquote className="text-xl font-medium italic text-gray-700 dark:text-gray-200 mb-4 leading-relaxed">
+                    "{currentQuote.text}"
+                  </blockquote>
+                  
+                  <p className="text-lg font-semibold text-purple-600 dark:text-blue-300">
+                    — {currentQuote.author}
+                  </p>
+                </CardContent>
+              </Card>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Daily Quote Section */}
-        <div className="mt-8">
-          <Card className="bg-gradient-to-br from-white/90 to-yellow-100/90 dark:from-slate-800/90 dark:to-blue-900/90 border-yellow-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
-            <CardContent className="p-8 text-center">
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <span className="text-4xl animate-pulse">💫</span>
-                <h2 className="text-3xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-yellow-600 to-orange-600 dark:from-yellow-300 dark:to-orange-300 bg-clip-text text-transparent">
-                  Today's Inspiration
-                </h2>
-                <span className="text-4xl animate-pulse">✨</span>
-              </div>
-              
-              <blockquote className="text-xl font-medium italic text-gray-700 dark:text-gray-200 mb-4 leading-relaxed">
-                "{currentQuote.text}"
-              </blockquote>
-              
-              <p className="text-lg font-semibold text-purple-600 dark:text-blue-300">
-                — {currentQuote.author}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Why Mental Health is Important */}
-        <div className="mt-8">
-          <Card className="bg-gradient-to-br from-white/90 to-green-100/90 dark:from-slate-800/90 dark:to-blue-900/90 border-green-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
-            <CardContent className="p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="text-4xl animate-pulse">🧠</span>
-                <h2 className="text-3xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-green-600 to-teal-600 dark:from-green-300 dark:to-teal-300 bg-clip-text text-transparent">
-                  Why Mental Health Matters 💚
-                </h2>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <span className="text-2xl">🌱</span>
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Emotional Growth</h3>
-                      <p className="text-gray-600 dark:text-gray-300">Mental wellness helps you understand and manage your emotions, building resilience for life's challenges.</p>
-                    </div>
+            {/* Why Mental Health is Important */}
+            <div className="mt-8">
+              <Card className="bg-gradient-to-br from-white/90 to-green-100/90 dark:from-slate-800/90 dark:to-blue-900/90 border-green-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="text-4xl animate-pulse">🧠</span>
+                    <h2 className="text-3xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-green-600 to-teal-600 dark:from-green-300 dark:to-teal-300 bg-clip-text text-transparent">
+                      Why Mental Health Matters 💚
+                    </h2>
                   </div>
                   
-                  <div className="flex items-start gap-3">
-                    <span className="text-2xl">🎯</span>
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Better Focus</h3>
-                      <p className="text-gray-600 dark:text-gray-300">A healthy mind improves concentration, learning abilities, and academic performance.</p>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">🌱</span>
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Emotional Growth</h3>
+                          <p className="text-gray-600 dark:text-gray-300">Mental wellness helps you understand and manage your emotions, building resilience for life's challenges.</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">🎯</span>
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Better Focus</h3>
+                          <p className="text-gray-600 dark:text-gray-300">A healthy mind improves concentration, learning abilities, and academic performance.</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">👫</span>
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Stronger Relationships</h3>
+                          <p className="text-gray-600 dark:text-gray-300">Mental wellness helps you connect better with family, friends, and build meaningful relationships.</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">🌟</span>
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Life Satisfaction</h3>
+                          <p className="text-gray-600 dark:text-gray-300">Taking care of your mental health leads to greater happiness and a more fulfilling life.</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <span className="text-2xl">👫</span>
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Stronger Relationships</h3>
-                      <p className="text-gray-600 dark:text-gray-300">Mental wellness helps you connect better with family, friends, and build meaningful relationships.</p>
-                    </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* AI-Enhanced Mood Tracker Preview */}
+            <div className="mt-12">
+              <Card className="bg-gradient-to-br from-white/80 to-pink-100/80 dark:from-slate-800/90 dark:to-blue-900/90 border-purple-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="text-4xl animate-bounce">🤖</span>
+                    <h2 className="text-3xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-purple-600 to-pink-600 dark:from-blue-300 dark:to-indigo-300 bg-clip-text text-transparent">
+                      AI-Powered Mood Insights 🎭
+                    </h2>
                   </div>
                   
-                  <div className="flex items-start gap-3">
-                    <span className="text-2xl">🌟</span>
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Life Satisfaction</h3>
-                      <p className="text-gray-600 dark:text-gray-300">Taking care of your mental health leads to greater happiness and a more fulfilling life.</p>
-                    </div>
+                  <div className="grid grid-cols-5 gap-4 mb-6">
+                    {['😰', '😢', '😐', '😊', '🤩'].map((emoji, index) => (
+                      <Card key={index} className="bg-gradient-to-br from-purple-200/50 to-pink-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-purple-300/50 dark:border-slate-600/50 border-2 hover:scale-110 transition-all duration-300 cursor-pointer rounded-3xl">
+                        <CardContent className="p-6 text-center">
+                          <div className="text-5xl mb-2 transform hover:scale-125 transition-transform duration-200">{emoji}</div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
-        {/* AI-Enhanced Mood Tracker Preview */}
-        <div className="mt-12">
-          <Card className="bg-gradient-to-br from-white/80 to-pink-100/80 dark:from-slate-800/90 dark:to-blue-900/90 border-purple-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
-            <CardContent className="p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="text-4xl animate-bounce">🤖</span>
-                <h2 className="text-3xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-purple-600 to-pink-600 dark:from-blue-300 dark:to-indigo-300 bg-clip-text text-transparent">
-                  AI-Powered Mood Insights 🎭
-                </h2>
-              </div>
-              
-              <div className="grid grid-cols-5 gap-4 mb-6">
-                {['😰', '😢', '😐', '😊', '🤩'].map((emoji, index) => (
-                  <Card key={index} className="bg-gradient-to-br from-purple-200/50 to-pink-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-purple-300/50 dark:border-slate-600/50 border-2 hover:scale-110 transition-all duration-300 cursor-pointer rounded-3xl">
-                    <CardContent className="p-6 text-center">
-                      <div className="text-5xl mb-2 transform hover:scale-125 transition-transform duration-200">{emoji}</div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                  <div className="bg-gradient-to-r from-pink-200/50 to-purple-200/50 dark:from-slate-700/50 dark:to-blue-800/50 rounded-3xl p-6 mb-6 border-2 border-dashed border-pink-300/50 dark:border-slate-600/50">
+                    <textarea 
+                      placeholder="🌟 Tell me about your day... AI will analyze your emotions and provide personalized insights! 🌟"
+                      className="w-full bg-transparent text-gray-700 dark:text-white placeholder-purple-500 dark:placeholder-blue-300 resize-none border-none outline-none text-lg font-medium"
+                      rows={3}
+                    />
+                  </div>
 
-              <div className="bg-gradient-to-r from-pink-200/50 to-purple-200/50 dark:from-slate-700/50 dark:to-blue-800/50 rounded-3xl p-6 mb-6 border-2 border-dashed border-pink-300/50 dark:border-slate-600/50">
-                <textarea 
-                  placeholder="🌟 Tell me about your day... AI will analyze your emotions and provide personalized insights! 🌟"
-                  className="w-full bg-transparent text-gray-700 dark:text-white placeholder-purple-500 dark:placeholder-blue-300 resize-none border-none outline-none text-lg font-medium"
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="bg-gradient-to-br from-orange-200/50 to-red-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-orange-300/50 dark:border-slate-600/50 border-2 rounded-3xl">
-                  <CardContent className="p-6 text-center">
-                    <div className="text-4xl font-bold text-orange-600 dark:text-orange-400 mb-2">🔥 0</div>
-                    <div className="text-orange-600 dark:text-orange-300 font-medium">Day Streak!</div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-gradient-to-br from-cyan-200/50 to-blue-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-cyan-300/50 dark:border-slate-600/50 border-2 rounded-3xl">
-                  <CardContent className="p-6 text-center">
-                    <div className="text-4xl font-bold text-cyan-600 dark:text-cyan-400 mb-2">⭐ 0</div>
-                    <div className="text-cyan-600 dark:text-cyan-300 font-medium">Mood Score</div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-gradient-to-br from-green-200/50 to-emerald-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-green-300/50 dark:border-slate-600/50 border-2 rounded-3xl">
-                  <CardContent className="p-6 text-center">
-                    <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">🤖 AI</div>
-                    <div className="text-green-600 dark:text-green-300 font-medium">Insights Ready</div>
-                  </CardContent>
-                </Card>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card className="bg-gradient-to-br from-orange-200/50 to-red-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-orange-300/50 dark:border-slate-600/50 border-2 rounded-3xl">
+                      <CardContent className="p-6 text-center">
+                        <div className="text-4xl font-bold text-orange-600 dark:text-orange-400 mb-2">🔥 0</div>
+                        <div className="text-orange-600 dark:text-orange-300 font-medium">Day Streak!</div>
+                      </CardContent>
+                    </Card>
+                    <Card className="bg-gradient-to-br from-cyan-200/50 to-blue-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-cyan-300/50 dark:border-slate-600/50 border-2 rounded-3xl">
+                      <CardContent className="p-6 text-center">
+                        <div className="text-4xl font-bold text-cyan-600 dark:text-cyan-400 mb-2">⭐ 0</div>
+                        <div className="text-cyan-600 dark:text-cyan-300 font-medium">Mood Score</div>
+                      </CardContent>
+                    </Card>
+                    <Card className="bg-gradient-to-br from-green-200/50 to-emerald-200/50 dark:from-slate-700/50 dark:to-blue-800/50 border-green-300/50 dark:border-slate-600/50 border-2 rounded-3xl">
+                      <CardContent className="p-6 text-center">
+                        <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">🤖 AI</div>
+                        <div className="text-green-600 dark:text-green-300 font-medium">Insights Ready</div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
