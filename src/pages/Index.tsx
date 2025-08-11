@@ -292,66 +292,66 @@ const Index = () => {
 
             {/* Emergency Mental Health Support */}
             <div className="mt-12">
-              <Card className="bg-gradient-to-br from-red-900/90 to-purple-900/90 dark:from-red-950/95 dark:to-purple-950/95 border-red-700/50 dark:border-red-800/50 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
+              <Card className="bg-gradient-to-br from-rose-900/80 to-slate-800/80 dark:from-rose-950/90 dark:to-slate-900/90 border-rose-600/30 dark:border-rose-700/30 backdrop-blur-sm shadow-2xl rounded-3xl transition-all duration-500">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm font-bold">SOS</div>
-                    <h2 className="text-3xl font-bold text-white">
+                    <div className="bg-rose-600/80 text-white px-3 py-1 rounded-lg text-sm font-bold">SOS</div>
+                    <h2 className="text-3xl font-bold text-rose-100">
                       Need Immediate Support?
                     </h2>
                   </div>
                   
-                  <p className="text-red-100 text-lg mb-8">
+                  <p className="text-rose-200 text-lg mb-8">
                     If you're experiencing a mental health crisis, please reach out to any of these 24x7 helplines:
                   </p>
                   
                   <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    <div className="bg-red-800/60 backdrop-blur-sm rounded-2xl p-6 border border-red-700/30">
-                      <h3 className="text-red-300 font-bold text-lg mb-2">Vandrevala Foundation</h3>
+                    <div className="bg-rose-800/50 backdrop-blur-sm rounded-2xl p-6 border border-rose-600/20">
+                      <h3 className="text-rose-200 font-bold text-lg mb-2">Vandrevala Foundation</h3>
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-white text-xl font-bold">📞 +91 9999 666 555</span>
                       </div>
-                      <p className="text-red-100 text-sm">
+                      <p className="text-rose-100 text-sm">
                         Free, confidential counseling for stress, anxiety, depression, and crisis. WhatsApp also available.
                       </p>
                     </div>
                     
-                    <div className="bg-red-800/60 backdrop-blur-sm rounded-2xl p-6 border border-red-700/30">
-                      <h3 className="text-red-300 font-bold text-lg mb-2">Kiran (Govt. of India)</h3>
+                    <div className="bg-rose-800/50 backdrop-blur-sm rounded-2xl p-6 border border-rose-600/20">
+                      <h3 className="text-rose-200 font-bold text-lg mb-2">Kiran (Govt. of India)</h3>
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-white text-xl font-bold">📞 1800-599-0019</span>
                       </div>
-                      <p className="text-red-100 text-sm">
+                      <p className="text-rose-100 text-sm">
                         National government helpline for mental health support and crisis intervention.
                       </p>
                     </div>
                     
-                    <div className="bg-red-800/60 backdrop-blur-sm rounded-2xl p-6 border border-red-700/30">
-                      <h3 className="text-red-300 font-bold text-lg mb-2">AASRA Suicide Prevention</h3>
+                    <div className="bg-rose-800/50 backdrop-blur-sm rounded-2xl p-6 border border-rose-600/20">
+                      <h3 className="text-rose-200 font-bold text-lg mb-2">AASRA Suicide Prevention</h3>
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-white text-xl font-bold">📞 9820466726</span>
                       </div>
-                      <p className="text-red-100 text-sm">
+                      <p className="text-rose-100 text-sm">
                         Suicide prevention and emotional support, Hindi & English.
                       </p>
                     </div>
                     
-                    <div className="bg-red-800/60 backdrop-blur-sm rounded-2xl p-6 border border-red-700/30">
-                      <h3 className="text-red-300 font-bold text-lg mb-2">Fortis National Helpline</h3>
+                    <div className="bg-rose-800/50 backdrop-blur-sm rounded-2xl p-6 border border-rose-600/20">
+                      <h3 className="text-rose-200 font-bold text-lg mb-2">Fortis National Helpline</h3>
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-white text-xl font-bold">📞 +91 8376804102</span>
                       </div>
-                      <p className="text-red-100 text-sm">
+                      <p className="text-rose-100 text-sm">
                         Multilingual mental health support and counseling.
                       </p>
                     </div>
                     
-                    <div className="bg-red-800/60 backdrop-blur-sm rounded-2xl p-6 border border-red-700/30 md:col-span-2 xl:col-span-1">
-                      <h3 className="text-red-300 font-bold text-lg mb-2">One Life Foundation</h3>
+                    <div className="bg-rose-800/50 backdrop-blur-sm rounded-2xl p-6 border border-rose-600/20 md:col-span-2 xl:col-span-1">
+                      <h3 className="text-rose-200 font-bold text-lg mb-2">One Life Foundation</h3>
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-white text-xl font-bold">📞 78930 78930</span>
                       </div>
-                      <p className="text-red-100 text-sm">
+                      <p className="text-rose-100 text-sm">
                         Suicide prevention and crisis support, English/Hindi/Tamil.
                       </p>
                     </div>
