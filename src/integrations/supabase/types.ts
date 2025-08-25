@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -50,6 +50,42 @@ export type Database = {
           situation?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      journal_entries: {
+        Row: {
+          ai_summary: string | null
+          content: string
+          created_at: string
+          id: string
+          insights: string[] | null
+          mood_indicators: string[] | null
+          suggestions: string[] | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          ai_summary?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          insights?: string[] | null
+          mood_indicators?: string[] | null
+          suggestions?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          ai_summary?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          insights?: string[] | null
+          mood_indicators?: string[] | null
+          suggestions?: string[] | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -107,6 +143,36 @@ export type Database = {
           notes?: string | null
           stress_level?: number | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      phq9_assessments: {
+        Row: {
+          created_at: string
+          id: string
+          responses: Json
+          severity_level: string
+          total_score: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          responses: Json
+          severity_level: string
+          total_score: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          responses?: Json
+          severity_level?: string
+          total_score?: number
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
